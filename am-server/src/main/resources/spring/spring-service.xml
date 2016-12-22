@@ -8,8 +8,5 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-    <!--<context:component-scan base-package="com.jcloud.monitor.data.domain.impl"/>-->
-
-    <!--<context:component-scan base-package="com.jcloud.monitor.data.service.impl"/>-->
-    <context:component-scan base-package="com.am.chat"/>
+    <context:component-scan base-package="com.am.chat.service.impl"/>
 </beans>

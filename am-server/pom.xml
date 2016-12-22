@@ -28,6 +28,17 @@
             <artifactId>am-chat-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.am.chat</groupId>
+            <artifactId>am-chat-mybatis</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.am.chat</groupId>
+            <artifactId>am-chat-service</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
 
         <dependency>
             <groupId>javax.inject</groupId>
@@ -82,6 +93,11 @@
             <artifactId>spring-webmvc</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.0.9</version>
+        </dependency>
         <!--json-->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -169,7 +185,7 @@
         </activation>
 
         <properties>
-            <jdbc_url><![CDATA[jdbc:mysql://127.0.0.1?useUnicode=true&amp;characterEncoding=UTF-8&allowMultiQueries=true]]></jdbc_url>
+            <jdbc_url><![CDATA[jdbc:mysql://127.0.0.1:3306/am_chating?useUnicode=true&amp;characterEncoding=UTF-8&allowMultiQueries=true]]></jdbc_url>
             <jdbc_username>root</jdbc_username>
             <jdbc_password>root</jdbc_password>
             <env_environment>DEVELOPMENT</env_environment>
