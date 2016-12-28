@@ -557,6 +557,7 @@
         <module>am-server</module>
         <module>am-api</module>
         <module>am-common</module>
+        <module>am-websocket</module>
     </modules>
 
 </project>
