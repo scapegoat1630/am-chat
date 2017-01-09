@@ -41,7 +41,7 @@
 </div>
 <!--登陆区域结束-->
 
-<div class="footer">
+<div class="footer"/>
 
 </body>
 <script type="text/javascript">

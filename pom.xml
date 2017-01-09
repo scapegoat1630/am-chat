@@ -11,7 +11,7 @@
 
 
     <properties>
-        <jdk.version>1.6</jdk.version>
+        <jdk.version>1.7</jdk.version>
         <jsr305.version>2.0.0</jsr305.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
@@ -64,7 +64,7 @@
         <commons-configuration.version>1.10</commons-configuration.version>
         <xstream.version>1.4.8</xstream.version>
         <pagehelper.version>4.1.4</pagehelper.version>
-        <usercenter-fs.version>1.0.47-SNAPSHOT</usercenter-fs.version>
+        <servlet-api.version>2.5</servlet-api.version>
     </properties>
 
     <dependencyManagement>
@@ -285,6 +285,11 @@
                 <artifactId>spring-security-taglibs</artifactId>
                 <version>${spring.security.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-websocket</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.googlecode.aviator</groupId>
@@ -351,6 +356,7 @@
                 <version>${univocity-version}</version>
             </dependency>
 
+            	
             <!-- Velocity -->
             <dependency>
                 <groupId>org.apache.velocity</groupId>
@@ -468,6 +474,11 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-jcl</artifactId>
                 <version>2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servlet-api.version}</version>
             </dependency>
 
         </dependencies>

@@ -1,6 +1,7 @@
-package com.chat.websocket;
+package com.am.chat.websocket;
 
-import com.chat.entity.Message;
+
+import com.am.chat.model.Message;
 
 public interface ChatMessageToDB{
 	

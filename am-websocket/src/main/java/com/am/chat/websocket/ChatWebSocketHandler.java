@@ -1,29 +1,19 @@
-package com.chat.websocket;
+package com.am.chat.websocket;
+
+import com.alibaba.fastjson.JSON;
+import com.am.chat.model.Message;
+import com.am.chat.model.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.*;
+import org.springframework.web.util.HtmlUtils;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.WebSocketMessage;
-import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.util.HtmlUtils;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.chat.entity.Message;
-import com.chat.entity.User;
-import com.chat.utils.GsonUtils;
-import com.chat.utils.MongodbUtils;
-
-
 
 /**
  * 
@@ -32,42 +22,29 @@ import com.chat.utils.MongodbUtils;
  */
 @Component("chatWebSocketHandler")
 public class ChatWebSocketHandler implements WebSocketHandler {
+	private static Logger logger = LogManager.getLogger(ChatWebSocketHandler.class);
 	
 	//在线用户的SOCKETsession(存储了所有的通信通道)
-	public static final Map<String, WebSocketSession> USER_SOCKETSESSION_MAP;
-
-	
+	public static final Map<Integer, WebSocketSession> USER_SOCKETSESSION_MAP;
 	//存储所有的在线用户
 	static {
-		USER_SOCKETSESSION_MAP = new HashMap<String, WebSocketSession>();
+		USER_SOCKETSESSION_MAP = new HashMap<Integer, WebSocketSession>();
 	}
-	
 	/**
 	 * webscoket建立好链接之后的处理函数--连接建立后的准备工作
 	 */
-	
 	public void afterConnectionEstablished(WebSocketSession webSocketSession) throws Exception {
 		//将当前的连接的用户会话放入MAP,key是用户编号
 		User loginUser=(User) webSocketSession.getAttributes().get("loginUser");
 		USER_SOCKETSESSION_MAP.put(loginUser.getId(), webSocketSession);
-		
 		//群发消息告知大家
 		Message msg = new Message();
-		msg.setText("风骚的【"+loginUser.getNickname()+"】踩着轻盈的步伐来啦。。。大家欢迎！");
-		
+		msg.setText("【"+loginUser.getNickname()+"】已登录！");
 		msg.setDate(new Date());
-		//获取所有在线的WebSocketSession对象集合
-		Set<Entry<String, WebSocketSession>> entrySet = USER_SOCKETSESSION_MAP.entrySet();
-		//将最新的所有的在线人列表放入消息对象的list集合中，用于页面显示
-		for (Entry<String, WebSocketSession> entry : entrySet) {
-			msg.getUserList().add((User)entry.getValue().getAttributes().get("loginUser"));
-		}
-		
 		//将消息转换为json
-		TextMessage message = new TextMessage(GsonUtils.toJson(msg));
+		TextMessage message = new TextMessage(JSON.toJSONString(msg));
 		//群发消息
 		sendMessageToAll(message);
-		
 	}
 
 	
@@ -77,24 +54,24 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 	//处理消息：当一个新的WebSocket到达的时候，会被调用（在客户端通过Websocket API发送的消息会经过这里，然后进行相应的处理）
 	public void handleMessage(WebSocketSession webSocketSession, WebSocketMessage<?> message) throws Exception {
 		//如果消息没有任何内容，则直接返回
-		if(message.getPayloadLength()==0)return;
+		if(message.getPayloadLength()==0)
+			return;
 		//反序列化服务端收到的json消息
-		Message msg = GsonUtils.fromJson(message.getPayload().toString(), Message.class);
+		Message msg = JSON.parseObject(message.getPayload().toString(),Message.class);
 		msg.setDate(new Date());
+		logger.info("user:{},message:{},time:{}",USER_SOCKETSESSION_MAP.get(msg.getFrom()),msg.getText(),msg.getDate());
 		//处理html的字符，转义：
 		String text = msg.getText();
 		//转换为HTML转义字符表示
 		String htmlEscapeText = HtmlUtils.htmlEscape(text);
 		msg.setText(htmlEscapeText);
-		String messageJson=JSON.toJSONString(msg);
-        MongodbUtils.insert(messageJson);
+		String messageJson= JSON.toJSONString(msg);
+        //MongodbUtils.insert(messageJson);
 		//判断是群发还是单发
 		if(msg.getTo()==null||msg.getTo().equals("-1")){
 			//群发
-			
 			sendMessageToAll(new TextMessage(messageJson));
 		}else{
-//			单发GsonUtils.toJson(msg)
 			sendMessageToUser(msg.getTo(), new TextMessage(messageJson));
 		}
 	}
@@ -106,12 +83,11 @@ public class ChatWebSocketHandler implements WebSocketHandler {
      */
 	public void handleTransportError(WebSocketSession webSocketSession, Throwable exception) throws Exception {
 		// 记录日志，准备关闭连接
-		System.out.println("Websocket异常断开:" + webSocketSession.getId() + "已经关闭");
+		logger.info("Websocket异常断开:" + webSocketSession.getId() + "已经关闭");
 		//一旦发生异常，强制用户下线，关闭session
 		if (webSocketSession.isOpen()) {
 			webSocketSession.close();
 		}
-		
 		//群发消息告知大家
 		Message msg = new Message();
 		msg.setDate(new Date());
@@ -119,27 +95,20 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 		//获取异常的用户的会话中的用户编号
 		User loginUser=(User)webSocketSession.getAttributes().get("loginUser");
 		//获取所有的用户的会话
-		Set<Entry<String, WebSocketSession>> entrySet = USER_SOCKETSESSION_MAP.entrySet();
+		Set<Map.Entry<Integer, WebSocketSession>> entrySet = USER_SOCKETSESSION_MAP.entrySet();
 		//并查找出在线用户的WebSocketSession（会话），将其移除（不再对其发消息了。。）
-		for (Entry<String, WebSocketSession> entry : entrySet) {
+		for (Map.Entry<Integer, WebSocketSession> entry : entrySet) {
 			if(entry.getKey().equals(loginUser.getId())){
-				msg.setText("万众瞩目的【"+loginUser.getNickname()+"】已经退出。。。！");
+				msg.setText("万众瞩目的【" + loginUser.getNickname() + "】已经退出。。。！");
 				//清除在线会话
 				USER_SOCKETSESSION_MAP.remove(entry.getKey());
 				//记录日志：
-				System.out.println("Socket会话已经移除:用户ID" + entry.getKey());
+				logger.info("Socket会话已经移除:用户ID" + entry.getKey());
 				break;
 			}
 		}
-		
-		//并查找出在线用户的WebSocketSession（会话），将其移除（不再对其发消息了。。）
-		for (Entry<String, WebSocketSession> entry : entrySet) {
-			msg.getUserList().add((User)entry.getValue().getAttributes().get("loginUser"));
-		}
-		
-		TextMessage message = new TextMessage(GsonUtils.toJson(msg));
+		TextMessage message = new TextMessage(JSON.toJSONString(msg));
 		sendMessageToAll(message);
-		
 	}
 
 
@@ -149,34 +118,25 @@ public class ChatWebSocketHandler implements WebSocketHandler {
      */
 	public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus) throws Exception {
 		// 记录日志，准备关闭连接
-		System.out.println("Websocket正常断开:" + webSocketSession.getId() + "已经关闭");
-		
+		logger.info("Websocket正常断开:" + webSocketSession.getId() + "已经关闭");
 		//群发消息告知大家
 		Message msg = new Message();
 		msg.setDate(new Date());
-		
 		//获取异常的用户的会话中的用户编号
 		User loginUser=(User)webSocketSession.getAttributes().get("loginUser");
-		Set<Entry<String, WebSocketSession>> entrySet = USER_SOCKETSESSION_MAP.entrySet();
 		//并查找出在线用户的WebSocketSession（会话），将其移除（不再对其发消息了。。）
-		for (Entry<String, WebSocketSession> entry : entrySet) {
+		for (Map.Entry<Integer, WebSocketSession> entry : USER_SOCKETSESSION_MAP.entrySet()) {
 			if(entry.getKey().equals(loginUser.getId())){
 				//群发消息告知大家
-				msg.setText("万众瞩目的【"+loginUser.getNickname()+"】已经有事先走了，大家继续聊...");
+				msg.setText("万众瞩目的【" + loginUser.getNickname() + "】已经有事先走了，大家继续聊...");
 				//清除在线会话
 				USER_SOCKETSESSION_MAP.remove(entry.getKey());
 				//记录日志：
-				System.out.println("Socket会话已经移除:用户ID" + entry.getKey());
+				logger.info("Socket会话已经移除:用户ID" + entry.getKey());
 				break;
 			}
 		}
-		
-		//并查找出在线用户的WebSocketSession（会话），将其移除（不再对其发消息了。。）
-		for (Entry<String, WebSocketSession> entry : entrySet) {
-			msg.getUserList().add((User)entry.getValue().getAttributes().get("loginUser"));
-		}
-		
-		TextMessage message = new TextMessage(GsonUtils.toJson(msg));
+		TextMessage message = new TextMessage(JSON.toJSONString(msg));
 		sendMessageToAll(message);
 	}
 
@@ -217,9 +177,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 	 */
 	private void sendMessageToAll(final TextMessage message){
 		//对用户发送的消息内容进行转
-		//获取到所有在线用户的SocketSession对象
-		Set<Entry<String, WebSocketSession>> entrySet = USER_SOCKETSESSION_MAP.entrySet();
-		for (Entry<String, WebSocketSession> entry : entrySet) {
+		for (Map.Entry<Integer, WebSocketSession> entry : USER_SOCKETSESSION_MAP.entrySet()) {
 			//某用户的WebSocketSession
 			final WebSocketSession webSocketSession = entry.getValue();
 			//判断连接是否仍然打开的
@@ -232,12 +190,11 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 								webSocketSession.sendMessage(message);
 							}
 						} catch (IOException e) {
-							e.printStackTrace();
+							logger.error(e);
 						}
 					}
 
 				}).start();
-				
 			}
 		}
 	}

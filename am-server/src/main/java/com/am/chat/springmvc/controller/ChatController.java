@@ -1,24 +1,24 @@
-package com.chat.controller;
+package com.am.chat.springmvc.controller;
 
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.am.chat.model.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.chat.entity.User;
-
-
-
+import java.util.Random;
 
 
 @Controller
 @RequestMapping("/chat")
 public class ChatController {
+	private static Logger logger = LogManager.getLogger(ChatController.class);
 	// 跳转到登录页面
 	@RequestMapping(value = "loginpage", method = RequestMethod.GET)
 	public ModelAndView loginpage() {
@@ -35,15 +35,12 @@ public class ChatController {
 			// 清除旧的用户
 			session.removeAttribute("loginUser");
 		}
-		// 新登录，需要构建一个用户
-		// 随机生成一个用户
-		String id = UUID.randomUUID().toString();
-		loginUser.setId(id);
+		//登录操作
+		loginUser.setId(new Random().nextInt(1000));//随机数
 		// 将用户放入session
 		session.setAttribute("loginUser", loginUser);
-
 		// 将登录信息放入数据库，便于协查跟踪聊天者
-		System.out.println("新用户诞生了：" + loginUser);
+		logger.info("userId:{},userName:{}",loginUser.getId(),loginUser.getNickname());
 		return new ModelAndView("redirect:mainpage");
 	}
 	

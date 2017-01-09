@@ -21,4 +21,5 @@
     <import resource="spring-dao.xml"/>
     <import resource="spring-service.xml"/>
     <import resource="spring-tx.xml"/>
+    <import resource="spring-websocket.xml"/>
 </beans>

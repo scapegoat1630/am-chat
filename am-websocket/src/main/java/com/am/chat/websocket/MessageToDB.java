@@ -1,20 +1,17 @@
-package com.chat.websocket;
+package com.am.chat.websocket;
 
-import com.chat.entity.Message;
-import com.chat.utils.MongodbUtils;
+import com.am.chat.model.Message;
+import com.am.chat.websocket.ChatMessageToDB;
 
 public class MessageToDB implements ChatMessageToDB {
 
 	@Override
 	public Message select() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public int insert(String message) {
-		System.out.println("12331");
-		MongodbUtils.insert(message);
 		return 0;
 	}
 

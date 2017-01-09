@@ -66,24 +66,21 @@
 			//===系统消息
 			$("#contentUl").append("<li><b>"+data.date+"</b><em>系统消息：</em><span>"+data.text+"</span></li>");
 			//刷新在线用户列表
-			$("#chatOnline").html("在线用户("+data.userList.length+")人");
-			$("#chatUserList").empty();
-			$(data.userList).each(function(){
-				$("#chatUserList").append("<li>"+this.nickname+"</li>");
-			});
+			//$("#chatOnline").html("在线用户("+data.userList.length+")人");
+			//$("#chatUserList").empty();
+			//$(data.userList).each(function(){
+			//	$("#chatUserList").append("<li>"+this.nickname+"</li>");
+			//});
 			
 		}else{
 			//===普通消息
 			//处理一下个人信息的显示：
 			if(data.fromName==fromName){
 				data.fromName="我";
-				$("#contentUl").append("<li><span  style='display:block; float:right;'><em>"+data.fromName+"</em><span>"+data.text+"</span><b>"+data.date+"</b></span></li><br/>");
+				$("#contentUl").append("<li><span  style='display:block; float:right;'><em>"+data.fromName+"</em><span>"+data.text+"</span><b>" + formatDate(+data.date)+"</b></span></li><br/>");
 			}else{
 				$("#contentUl").append("<li><b>"+data.date+"</b><em>"+data.fromName+"</em><span>"+data.text+"</span></li><br/>");
 			}
-			
-		}
-		
 		scrollToBottom();
 	}; 
 	
@@ -177,7 +174,20 @@
 		//var div = document.getElementById('chatCon');
 		var div = document.getElementById('up');
 		div.scrollTop = div.scrollHeight;
-	}	
+	}
+	//毫秒级时间戳转换成前端需要的样式
+	function   formatDate(now)   {
+		var   d=new   Date(now);
+		var   year=d.getYear();
+		var   month=d.getMonth()+1;
+		var   date=d.getDate();
+		var   hour=d.getHours();
+		var   minute=d.getMinutes();
+		var   second=d.getSeconds();
+		var pm = hour > 12;
+		//return   year+"-"+month+"-"+date+"   "+hour+":"+minute+":"+second;
+		return   (pm ? hour - 12:hour) + ":" + ("000" + minute ).substr( -2 ) + (pm ? " pm":" am");
+	}
 	//格式化日期
 	Date.prototype.Format = function (fmt) { //author: meizz 
 	    var o = {
@@ -196,27 +206,28 @@
 	}
 	
 	//判断照片大小
-   function getPhotoSize(obj){
-    photoExt=obj.value.substr(obj.value.lastIndexOf(".")).toLowerCase();//获得文件后缀名
-    if(photoExt!='.jpg'){
-        alert("请上传后缀名为jpg的照片!");
-        return false;
-    }
-    var fileSize = 0;
-    var isIE = /msie/i.test(navigator.userAgent) && !window.opera;            
-    if (isIE && !obj.files) {          
-         var filePath = obj.value;            
-         var fileSystem = new ActiveXObject("Scripting.FileSystemObject");   
-         var file = fileSystem.GetFile (filePath);               
-         fileSize = file.Size;         
-    }else {  
-         fileSize = obj.files[0].size;     
-    } 
-    fileSize=Math.round(fileSize/1024*100)/100; //单位为KB
-    if(fileSize>=200){
-        alert("照片最大尺寸为10KB，请重新上传!");
-        return false;
-    }
+   function getPhotoSize(obj) {
+	   photoExt = obj.value.substr(obj.value.lastIndexOf(".")).toLowerCase();//获得文件后缀名
+	   if (photoExt != '.jpg') {
+		   alert("请上传后缀名为jpg的照片!");
+		   return false;
+	   }
+	   var fileSize = 0;
+	   var isIE = /msie/i.test(navigator.userAgent) && !window.opera;
+	   if (isIE && !obj.files) {
+		   var filePath = obj.value;
+		   var fileSystem = new ActiveXObject("Scripting.FileSystemObject");
+		   var file = fileSystem.GetFile(filePath);
+		   fileSize = file.Size;
+	   } else {
+		   fileSize = obj.files[0].size;
+	   }
+	   fileSize = Math.round(fileSize / 1024 * 100) / 100; //单位为KB
+	   if (fileSize >= 200) {
+		   alert("照片最大尺寸为10KB，请重新上传!");
+		   return false;
+	   }
+   }
 }
 	
 
@@ -247,10 +258,7 @@
         </div>
     	<div class="chatCon">
         	<div class="up" id="up">
-            	<ul id="contentUl">
-                	<!-- <li><b>14:08</b><em>江山如此多娇</em><span>今天天气不大家出来嗨！！！！！</span></li>
-                	-->
-                </ul>
+            	<ul id="contentUl" />
             </div>
             <div class="down">
                 <textarea class="textInfo" id="msg" title="按ctrl+enter直接发送"></textarea>
