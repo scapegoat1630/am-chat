@@ -7,7 +7,7 @@
 <title>AM聊天</title>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/lbt.js"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css" type="text/css" media="all" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/js/style.css" type="text/css" media="all" />
 <script type="text/javascript">
 	$(function(){
 		

@@ -1,272 +1,299 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+pageEncoding="UTF-8"%>
 <%
-	String path = request.getContextPath();
-	String basePath = request.getServerName() + ":" + request.getServerPort() + path + "/";
-	String baseUrlPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
+String path = request.getContextPath();
+String basePath = request.getServerName() + ":" + request.getServerPort() + path + "/";
+String baseUrlPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>am聊天</title>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/sockjs.min.js"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css" type="text/css" media="all" />
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/chat.css" type="text/css" media="all" />
-<input type="file" id="imgFile" name="upload" style="width:150px;" onchange="getPhotoSize(this)"/>
-<script type="text/javascript">
-	var path = '<%=basePath%>';
-	
-	var uid='${sessionScope.loginUser.id}';
-	//发送人编号
-	var from='${sessionScope.loginUser.id}';
-	var fromName='${sessionScope.loginUser.nickname}';
-	//接收人编号
-	var to="-1";
-	
-	// 创建一个Socket实例
-	//参数为URL，ws表示WebSocket协议。onopen、onclose和onmessage方法把事件连接到Socket实例上。每个方法都提供了一个事件，以表示Socket的状态。
-	var websocket;
-	//不同浏览器的WebSocket对象类型不同
-	//alert("ws://" + path + "/ws?uid="+uid);
-	if ('WebSocket' in window) {
-		websocket = new WebSocket("ws://" + path + "ws");
-		console.log("=============WebSocket");
-		//火狐
-	} else if ('MozWebSocket' in window) {
-		websocket = new MozWebSocket("ws://" + path + "ws");
-		console.log("=============MozWebSocket");
-	} else {
-		websocket = new SockJS("http://" + path + "ws/sockjs");
-		console.log("=============SockJS");
-	}
-	
-	console.log("ws://" + path + "ws");
-	
-	//打开Socket,
-	websocket.onopen = function(event) { 
-		console.log("WebSocket:已连接");
-	}
-	
-	// 监听消息
-	//onmessage事件提供了一个data属性，它可以包含消息的Body部分。消息的Body部分必须是一个字符串，可以进行序列化/反序列化操作，以便传递更多的数据。
-	websocket.onmessage = function(event) { 
-		console.log('Client received a message',event);
-		//var data=JSON.parse(event.data);
-		var data=$.parseJSON(event.data);
-		console.log("WebSocket:收到一条消息",data);
-		
-		//2种推送的消息
-		//1.用户聊天信息：发送消息触发
-		//2.系统消息：登录和退出触发
-		
-		//判断是否是欢迎消息（没用户编号的就是欢迎消息）
-		if(data.from==undefined||data.from==null||data.from==""){
-			//===系统消息
-			$("#contentUl").append("<li><b>"+data.date+"</b><em>系统消息：</em><span>"+data.text+"</span></li>");
-			//刷新在线用户列表
-			//$("#chatOnline").html("在线用户("+data.userList.length+")人");
-			//$("#chatUserList").empty();
-			//$(data.userList).each(function(){
-			//	$("#chatUserList").append("<li>"+this.nickname+"</li>");
-			//});
-			
-		}else{
-			//===普通消息
-			//处理一下个人信息的显示：
-			if(data.fromName==fromName){
-				data.fromName="我";
-				$("#contentUl").append("<li><span  style='display:block; float:right;'><em>"+data.fromName+"</em><span>"+data.text+"</span><b>" + formatDate(+data.date)+"</b></span></li><br/>");
-			}else{
-				$("#contentUl").append("<li><b>"+data.date+"</b><em>"+data.fromName+"</em><span>"+data.text+"</span></li><br/>");
-			}
-		scrollToBottom();
-	}; 
-	
-	// 监听WebSocket的关闭
-	websocket.onclose = function(event) { 
-		$("#contentUl").append("<li><b>"+new Date().Format("yyyy-MM-dd hh:mm:ss")+"</b><em>系统消息：</em><span>连接已断开！</span></li>");
-		scrollToBottom();
-		console.log("WebSocket:已关闭：Client notified socket has closed",event); 
-	}; 
-	
-	//监听异常
-	websocket.onerror = function(event) {
-		$("#contentUl").append("<li><b>"+new Date().Format("yyyy-MM-dd hh:mm:ss")+"</b><em>系统消息：</em><span>连接异常，建议重新登录</span></li>");
-		scrollToBottom();
-		console.log("WebSocket:发生错误 ",event);
-	};
-	
-	//onload初始化
-	$(function(){
-		//发送消息
-		$("#sendBtn").on("click",function(){
-			sendMsg();
-		});
-		
-		//给退出聊天绑定事件
-		$("#exitBtn").on("click",function(){
-			closeWebsocket();
-			location.href="${pageContext.request.contextPath}/index.jsp";
-		});
-		
-		//给输入框绑定事件
-		$("#msg").on("keydown",function(event){
-			keySend(event);
-		});
-		
-		//初始化时如果有消息，则滚动条到最下面：
-		scrollToBottom();
-		
-	});
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+    <title>阿姆娱乐聊天室</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/normalize.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/sockjs.min.js"></script>
+	<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+	<script src='http://cdnjs.cloudflare.com/ajax/libs/nicescroll/3.5.4/jquery.nicescroll.js'></script>
+	  <script src="${pageContext.request.contextPath}/resources/js/common.js"></script>
+	  <script src="${pageContext.request.contextPath}/resources/js/index.js"></script>
+	  <script type="text/javascript">
+		  var path = '<%=basePath%>';
+		  //当前用户id
+		  var uid='${sessionScope.loginUser.id}';
+		  //当前用户id
+		  var from='${sessionScope.loginUser.id}';
+		  //当前用户名称
+		  var fromName='${sessionScope.loginUser.nickname}';
+		  //接收人编号
+		  var to="-1";
+		  /**创建一个Socket实例
+		   *参数为URL，ws表示WebSocket协议。
+		   * onopen、onclose和onmessage方法把事件连接到Socket实例上。
+		   * 每个方法都提供了一个事件，以表示Socket的状态。
+		   */
+		  var websocket;
+		  //不同浏览器的WebSocket对象类型不同
+		  if ('WebSocket' in window) {
+			  websocket = new WebSocket("ws://" + path + "ws");
+			  //火狐
+		  } else if ('MozWebSocket' in window) {
+			  websocket = new MozWebSocket("ws://" + path + "ws");
+		  } else {
+			  websocket = new SockJS("http://" + path + "ws/sockjs");
+		  }
+		  //打开Socket,
+		  websocket.onopen = function(event) {
+			  console.log("WebSocket:已连接");
+		  }
+		  // 监听WebSocket的关闭
+		  websocket.onclose = function(event) {
+			  //todo 系统消息，监听WebSocket的关闭
+			  claerResizeScroll();
+			  console.log("WebSocket:已关闭：Client notified socket has closed",event);
+		  };
+		  //监听异常
+		  websocket.onerror = function(event) {
+			  //todo 系统消息，监听WebSocket异常
+			  claerResizeScroll();
+			  console.log("WebSocket:发生错误 ",event);
+		  };
+		  // 监听消息
+		  /**
+		   *onmessage事件提供了一个data属性，它可以包含消息的Body部分。
+		   * 消息的Body部分必须是一个字符串，可以进行序列化/反序列化操作，以便传递更多的数据。
+		   */
+		  websocket.onmessage = function(event) {
+			  console.log('Client received a message',event);
+			  var data=$.parseJSON(event.data);
+			  console.log("WebSocket:收到一条消息",data);
+			 insertI(data,uid);
+		  }
+		  //使用ctrl+回车快捷键发送消息
+		  function keySend(e) {
+			  var theEvent = window.event || e;
+			  var code = theEvent.keyCode || theEvent.which;
+			  if (theEvent.ctrlKey && code == 13) {
+				  var msg=$("#text");
+				  if (msg.innerHTML == "") {
+					  msg.focus();
+					  return false;
+				  }
+				  sendMsg();
+			  }
+		  }
+		  //发送消息
+		  function sendMsg(){
+			  //对象为空了
+			  if(websocket==undefined||websocket==null){
+				  //alert('WebSocket connection not established, please connect.');
+				  alert('您的连接已经丢失，请退出聊天重新进入');
+				  return;
+			  }
+			  //获取用户要发送的消息内容
+			  var msg=$("#text").val();
+			  if(msg==""){
+				  return;
+			  }else{
+				  var data={};
+				  data["from"]=from;
+				  data["fromName"]=fromName;
+				  data["to"]=to;
+				  data["text"]=msg;
+				  //发送消息
+				  websocket.send(JSON.stringify(data));
+				  //发送完消息，清空输入框
+				  $("#text").val("");
+			  }
+		  }
+		  //关闭Websocket连接
+		  function closeWebsocket(){
+			  if (websocket != null) {
+				  websocket.close();
+				  websocket = null;
+			  }
+		  }
+		  //onload初始化
+		  $(function(){
+			  $(".list-friends").niceScroll(conf);
+			  $(".messages").niceScroll(lol);
+			  //发送消息
+			  $("#sendBtn").on("click",function(){
+				  sendMsg();
+			  });
+			  //给退出聊天绑定事件
+			  $("#exitBtn").on("click",function(){
+				  closeWebsocket();
+				  location.href="${pageContext.request.contextPath}/index.jsp";
+			  });
+			  //给输入框绑定事件
+			  $("#text").on("keydown",function(event){
+				  keySend(event);
+			  });
+			  //初始化时如果有消息，则滚动条到最下面
+			  claerResizeScroll();
+		  });
+	  </script>
+  </head>
 
-	//使用ctrl+回车快捷键发送消息
-	function keySend(e) {
-		var theEvent = window.event || e; 
-		var code = theEvent.keyCode || theEvent.which; 
-		if (theEvent.ctrlKey && code == 13) {
-			var msg=$("#msg");
-			if (msg.innerHTML == "") {
-				msg.focus();
-				return false;
-			}
-			sendMsg();
-		}
-	}
-	
-	//发送消息
-	function sendMsg(){
-		//对象为空了
-		if(websocket==undefined||websocket==null){
-			//alert('WebSocket connection not established, please connect.');
-			alert('您的连接已经丢失，请退出聊天重新进入');
-			return;
-		}
-		//获取用户要发送的消息内容
-		var msg=$("#msg").val();
-		if(msg==""){
-			return;
-		}else{
-			var data={};
-			data["from"]=from;
-			data["fromName"]=fromName;
-			data["to"]=to;
-			data["text"]=msg;
-			//发送消息
-			websocket.send(JSON.stringify(data));
-			//发送完消息，清空输入框
-			$("#msg").val("");
-		}
-	}
+  <body>
 
-	//关闭Websocket连接
-	function closeWebsocket(){
-		if (websocket != null) {
-			websocket.close();
-			websocket = null;
-		}
-		
-	}
-	
-	//div滚动条(scrollbar)保持在最底部
-	function scrollToBottom(){
-		//var div = document.getElementById('chatCon');
-		var div = document.getElementById('up');
-		div.scrollTop = div.scrollHeight;
-	}
-	//毫秒级时间戳转换成前端需要的样式
-	function   formatDate(now)   {
-		var   d=new   Date(now);
-		var   year=d.getYear();
-		var   month=d.getMonth()+1;
-		var   date=d.getDate();
-		var   hour=d.getHours();
-		var   minute=d.getMinutes();
-		var   second=d.getSeconds();
-		var pm = hour > 12;
-		//return   year+"-"+month+"-"+date+"   "+hour+":"+minute+":"+second;
-		return   (pm ? hour - 12:hour) + ":" + ("000" + minute ).substr( -2 ) + (pm ? " pm":" am");
-	}
-	//格式化日期
-	Date.prototype.Format = function (fmt) { //author: meizz 
-	    var o = {
-	        "M+": this.getMonth() + 1, //月份 
-	        "d+": this.getDate(), //日 
-	        "h+": this.getHours(), //小时 
-	        "m+": this.getMinutes(), //分 
-	        "s+": this.getSeconds(), //秒 
-	        "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
-	        "S": this.getMilliseconds() //毫秒 
-	    };
-	    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-	    for (var k in o)
-	    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-	    return fmt;
-	}
-	
-	//判断照片大小
-   function getPhotoSize(obj) {
-	   photoExt = obj.value.substr(obj.value.lastIndexOf(".")).toLowerCase();//获得文件后缀名
-	   if (photoExt != '.jpg') {
-		   alert("请上传后缀名为jpg的照片!");
-		   return false;
-	   }
-	   var fileSize = 0;
-	   var isIE = /msie/i.test(navigator.userAgent) && !window.opera;
-	   if (isIE && !obj.files) {
-		   var filePath = obj.value;
-		   var fileSystem = new ActiveXObject("Scripting.FileSystemObject");
-		   var file = fileSystem.GetFile(filePath);
-		   fileSize = file.Size;
-	   } else {
-		   fileSize = obj.files[0].size;
-	   }
-	   fileSize = Math.round(fileSize / 1024 * 100) / 100; //单位为KB
-	   if (fileSize >= 200) {
-		   alert("照片最大尺寸为10KB，请重新上传!");
-		   return false;
-	   }
-   }
-}
-	
+    	<div class="ui">
+		<div class="left-menu">
+				<menu class="list-friends">
+					<li>
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<div class="info">
+							<div class="user">灏忚眴</div>
+							<div class="status on"> online</div>
+						</div>
+					</li>
+					<li>
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<div class="info">
+							<div class="user">闃垮</div>
+							<div class="status on"> online</div>
+						</div>
+					</li>
+					<li>
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<div class="info">
+							<div class="user">2妲�</div>
+							<div class="status off">left 3 min age</div>
+						</div>
+					</li>
+					<li>
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<div class="info">
+							<div class="user">鐞嗛┈</div>
+							<div class="status on"> online</div>
+						</div>
+					</li>
+					<li>
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<div class="info">
+							<div class="user">Name Fam</div>
+							<div class="status off">left 4 min age</div>
+						</div>
+					</li>
+					<li>
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<div class="info">
+							<div class="user">Name Fam</div>
+							<div class="status off">left 12 min age</div>
+						</div>
+					</li>
+					<li>
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<div class="info">
+							<div class="user">Name Fam</div>
+							<div class="status off">left 13 min age</div>
+						</div>
+					</li>
+					<li>
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<div class="info">
+							<div class="user">Name Fam</div>
+							<div class="status on">online</div>
+						</div>
+					</li>
+					<li>
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<div class="info">
+							<div class="user">Name Fam</div>
+							<div class="status off">left 6 min age</div>
+						</div>
+					</li>
+					<li>
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<div class="info">
+							<div class="user">Name Fam</div>
+							<div class="status on">online</div>
+						</div>
+					</li>
+					<li>
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<div class="info">
+							<div class="user">Name Fam</div>
+							<div class="status off">left 1 min age</div>
+						</div>
+					</li>
+					<li>
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<div class="info">
+							<div class="user">Name Fam</div>
+							<div class="status on">online</div>
+						</div>
+					</li>
+					<li>
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<div class="info">
+							<div class="user">Name Fam</div>
+							<div class="status off">left 23 min age</div>
+						</div>
+					</li>
+				</menu>
+		</div>
+		<div class="chat">
 
-		
-				
-</script>
-</head>
+			<div class="top">
+				<div class="avatar">
+					<img width="50" height="50" src="/resources/userhead/1.jpg">
+				</div>
+				<div class="info">
+					<div class="name">阿姆娱乐聊天室</div>
+					<div class="count"> 1902 娑堟伅</div>
+				</div>
+			</div>
 
-<body>
 
-<!--头部开始-->
-<div class="header">
-	<div class="inHeader">
-    	<h1>AM聊天室系统</h1>
-        <div class="style">
-        	<p>当前登录用户：${sessionScope.loginUser!=null?sessionScope.loginUser.nickname:"请登录" }&nbsp;&nbsp;&nbsp;<button id="exitBtn">退出或重新登录</button></p>
-        </div>
-    </div>
-</div>
-<!--头部end-->
-<!--聊天区域开始-->
-<div class="chatArea" id="chatArea">
-	<div class="inChatArea">
-    	<div id="chatSidebar" class="chatSidebar">
-        	<h2 id="chatOnline">在线用户(0人)</h2>
-            <ul id="chatUserList">
-            </ul>
-        </div>
-    	<div class="chatCon">
-        	<div class="up" id="up">
-            	<ul id="contentUl" />
-            </div>
-            <div class="down">
-                <textarea class="textInfo" id="msg" title="按ctrl+enter直接发送"></textarea>
-                <button class="btn" id="sendBtn"></button>
-            </div>
-        </div>
-    </div>
-</div>
-<!--聊天区域结束-->
-</body>
+			<ul class="messages">
+
+				<li class="friend-with-a-SVAGina">
+					<div class="head">
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<span class="name">阿姆</span>
+						<span class="time">10:15 AM</span>
+					</div>
+					<div class="message">小豆</div>
+				</li>
+
+				<li class="i">
+					<div class="head">
+						<span class="time">10:13 AM, Today</span>
+						<span class="name">小豆</span>
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+					</div>
+					<div class="message">怎么</div>
+				</li>
+
+				<li class="i">
+					<div class="head">
+						<span class="name">小豆</span>
+						<span class="time">10:13 AM, Today</span>
+						<img width="50" height="50" src="/resources/userhead/1.jpg">
+					</div>
+					<div class="message">你走吧!</div>
+				</li>
+
+				<li class="friend-with-a-SVAGina">
+					<div class="head">
+					<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<span class="name">阿姆</span>
+						<span class="time">10:15 AM, Today</span>
+					</div>
+					<div class="message">小豆不要我</div>
+				</li>
+			</ul>
+			<div class="write-form">
+				<textarea placeholder="Type your message" name="e" id="text"  rows="2"></textarea>
+				<i class="fa fa-picture-o"></i>
+				<i class="fa fa-file-o"></i>
+				<span class="send" id = "sendBtn">发送</span>
+			</div>
+		</div>
+	</div>
+
+
+  </body>
 </html>
