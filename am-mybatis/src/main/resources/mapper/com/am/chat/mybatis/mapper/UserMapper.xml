@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.am.chat.mybatis.mapper.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.am.chat.model.User" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="birthday" property="birthday" jdbcType="DATE" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="phonenumber" property="phonenumber" jdbcType="INTEGER" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="headimage" property="headimage" jdbcType="VARCHAR" />
+    <result column="intro" property="intro" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="comments" property="comments" jdbcType="VARCHAR" />
+    <result column="k1" property="k1" jdbcType="VARCHAR" />
+    <result column="k2" property="k2" jdbcType="INTEGER" />
+    <result column="k3" property="k3" jdbcType="TIMESTAMP" />
+    <result column="k4" property="k4" jdbcType="TIME" />
+    <result column="k5" property="k5" jdbcType="VARCHAR" />
+    <result column="k6" property="k6" jdbcType="VARCHAR" />
+    <result column="k8" property="k8" jdbcType="VARCHAR" />
+    <result column="k9" property="k9" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.am.chat.model.User" extends="BaseResultMap" >
+    <result column="k7" property="k7" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, name, password, age, birthday, sex, phonenumber, nickname, address, headimage, 
+    intro, state, comments, k1, k2, k3, k4, k5, k6, k8, k9
+  </sql>
+  <sql id="Blob_Column_List" >
+    k7
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.am.chat.model.UserExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from am_user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <include refid="MysqlDialectSuffix" />
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.am.chat.model.UserExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from am_user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <include refid="MysqlDialectSuffix" />
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from am_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from am_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.am.chat.model.UserExample" >
+    delete from am_user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.am.chat.model.User" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into am_user (name, password, age, 
+      birthday, sex, phonenumber, 
+      nickname, address, headimage, 
+      intro, state, comments, 
+      k1, k2, k3, k4, 
+      k5, k6, k8, k9, 
+      k7)
+    values (#{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER}, 
+      #{birthday,jdbcType=DATE}, #{sex,jdbcType=INTEGER}, #{phonenumber,jdbcType=INTEGER}, 
+      #{nickname,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{headimage,jdbcType=VARCHAR}, 
+      #{intro,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{comments,jdbcType=VARCHAR}, 
+      #{k1,jdbcType=VARCHAR}, #{k2,jdbcType=INTEGER}, #{k3,jdbcType=TIMESTAMP}, #{k4,jdbcType=TIME}, 
+      #{k5,jdbcType=VARCHAR}, #{k6,jdbcType=VARCHAR}, #{k8,jdbcType=VARCHAR}, #{k9,jdbcType=VARCHAR}, 
+      #{k7,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.am.chat.model.User" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into am_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="age != null" >
+        age,
+      </if>
+      <if test="birthday != null" >
+        birthday,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="phonenumber != null" >
+        phonenumber,
+      </if>
+      <if test="nickname != null" >
+        nickname,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="headimage != null" >
+        headimage,
+      </if>
+      <if test="intro != null" >
+        intro,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="comments != null" >
+        comments,
+      </if>
+      <if test="k1 != null" >
+        k1,
+      </if>
+      <if test="k2 != null" >
+        k2,
+      </if>
+      <if test="k3 != null" >
+        k3,
+      </if>
+      <if test="k4 != null" >
+        k4,
+      </if>
+      <if test="k5 != null" >
+        k5,
+      </if>
+      <if test="k6 != null" >
+        k6,
+      </if>
+      <if test="k8 != null" >
+        k8,
+      </if>
+      <if test="k9 != null" >
+        k9,
+      </if>
+      <if test="k7 != null" >
+        k7,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="birthday != null" >
+        #{birthday,jdbcType=DATE},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="phonenumber != null" >
+        #{phonenumber,jdbcType=INTEGER},
+      </if>
+      <if test="nickname != null" >
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="headimage != null" >
+        #{headimage,jdbcType=VARCHAR},
+      </if>
+      <if test="intro != null" >
+        #{intro,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="comments != null" >
+        #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="k1 != null" >
+        #{k1,jdbcType=VARCHAR},
+      </if>
+      <if test="k2 != null" >
+        #{k2,jdbcType=INTEGER},
+      </if>
+      <if test="k3 != null" >
+        #{k3,jdbcType=TIMESTAMP},
+      </if>
+      <if test="k4 != null" >
+        #{k4,jdbcType=TIME},
+      </if>
+      <if test="k5 != null" >
+        #{k5,jdbcType=VARCHAR},
+      </if>
+      <if test="k6 != null" >
+        #{k6,jdbcType=VARCHAR},
+      </if>
+      <if test="k8 != null" >
+        #{k8,jdbcType=VARCHAR},
+      </if>
+      <if test="k9 != null" >
+        #{k9,jdbcType=VARCHAR},
+      </if>
+      <if test="k7 != null" >
+        #{k7,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.am.chat.model.UserExample" resultType="java.lang.Integer" >
+    select count(*) from am_user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update am_user
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.password != null" >
+        password = #{record.password,jdbcType=VARCHAR},
+      </if>
+      <if test="record.age != null" >
+        age = #{record.age,jdbcType=INTEGER},
+      </if>
+      <if test="record.birthday != null" >
+        birthday = #{record.birthday,jdbcType=DATE},
+      </if>
+      <if test="record.sex != null" >
+        sex = #{record.sex,jdbcType=INTEGER},
+      </if>
+      <if test="record.phonenumber != null" >
+        phonenumber = #{record.phonenumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.nickname != null" >
+        nickname = #{record.nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.address != null" >
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.headimage != null" >
+        headimage = #{record.headimage,jdbcType=VARCHAR},
+      </if>
+      <if test="record.intro != null" >
+        intro = #{record.intro,jdbcType=VARCHAR},
+      </if>
+      <if test="record.state != null" >
+        state = #{record.state,jdbcType=INTEGER},
+      </if>
+      <if test="record.comments != null" >
+        comments = #{record.comments,jdbcType=VARCHAR},
+      </if>
+      <if test="record.k1 != null" >
+        k1 = #{record.k1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.k2 != null" >
+        k2 = #{record.k2,jdbcType=INTEGER},
+      </if>
+      <if test="record.k3 != null" >
+        k3 = #{record.k3,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.k4 != null" >
+        k4 = #{record.k4,jdbcType=TIME},
+      </if>
+      <if test="record.k5 != null" >
+        k5 = #{record.k5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.k6 != null" >
+        k6 = #{record.k6,jdbcType=VARCHAR},
+      </if>
+      <if test="record.k8 != null" >
+        k8 = #{record.k8,jdbcType=VARCHAR},
+      </if>
+      <if test="record.k9 != null" >
+        k9 = #{record.k9,jdbcType=VARCHAR},
+      </if>
+      <if test="record.k7 != null" >
+        k7 = #{record.k7,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update am_user
+    set id = #{record.id,jdbcType=INTEGER},
+      name = #{record.name,jdbcType=VARCHAR},
+      password = #{record.password,jdbcType=VARCHAR},
+      age = #{record.age,jdbcType=INTEGER},
+      birthday = #{record.birthday,jdbcType=DATE},
+      sex = #{record.sex,jdbcType=INTEGER},
+      phonenumber = #{record.phonenumber,jdbcType=INTEGER},
+      nickname = #{record.nickname,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      headimage = #{record.headimage,jdbcType=VARCHAR},
+      intro = #{record.intro,jdbcType=VARCHAR},
+      state = #{record.state,jdbcType=INTEGER},
+      comments = #{record.comments,jdbcType=VARCHAR},
+      k1 = #{record.k1,jdbcType=VARCHAR},
+      k2 = #{record.k2,jdbcType=INTEGER},
+      k3 = #{record.k3,jdbcType=TIMESTAMP},
+      k4 = #{record.k4,jdbcType=TIME},
+      k5 = #{record.k5,jdbcType=VARCHAR},
+      k6 = #{record.k6,jdbcType=VARCHAR},
+      k8 = #{record.k8,jdbcType=VARCHAR},
+      k9 = #{record.k9,jdbcType=VARCHAR},
+      k7 = #{record.k7,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update am_user
+    set id = #{record.id,jdbcType=INTEGER},
+      name = #{record.name,jdbcType=VARCHAR},
+      password = #{record.password,jdbcType=VARCHAR},
+      age = #{record.age,jdbcType=INTEGER},
+      birthday = #{record.birthday,jdbcType=DATE},
+      sex = #{record.sex,jdbcType=INTEGER},
+      phonenumber = #{record.phonenumber,jdbcType=INTEGER},
+      nickname = #{record.nickname,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      headimage = #{record.headimage,jdbcType=VARCHAR},
+      intro = #{record.intro,jdbcType=VARCHAR},
+      state = #{record.state,jdbcType=INTEGER},
+      comments = #{record.comments,jdbcType=VARCHAR},
+      k1 = #{record.k1,jdbcType=VARCHAR},
+      k2 = #{record.k2,jdbcType=INTEGER},
+      k3 = #{record.k3,jdbcType=TIMESTAMP},
+      k4 = #{record.k4,jdbcType=TIME},
+      k5 = #{record.k5,jdbcType=VARCHAR},
+      k6 = #{record.k6,jdbcType=VARCHAR},
+      k8 = #{record.k8,jdbcType=VARCHAR},
+      k9 = #{record.k9,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.am.chat.model.User" >
+    update am_user
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        age = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="birthday != null" >
+        birthday = #{birthday,jdbcType=DATE},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="phonenumber != null" >
+        phonenumber = #{phonenumber,jdbcType=INTEGER},
+      </if>
+      <if test="nickname != null" >
+        nickname = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="headimage != null" >
+        headimage = #{headimage,jdbcType=VARCHAR},
+      </if>
+      <if test="intro != null" >
+        intro = #{intro,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="comments != null" >
+        comments = #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="k1 != null" >
+        k1 = #{k1,jdbcType=VARCHAR},
+      </if>
+      <if test="k2 != null" >
+        k2 = #{k2,jdbcType=INTEGER},
+      </if>
+      <if test="k3 != null" >
+        k3 = #{k3,jdbcType=TIMESTAMP},
+      </if>
+      <if test="k4 != null" >
+        k4 = #{k4,jdbcType=TIME},
+      </if>
+      <if test="k5 != null" >
+        k5 = #{k5,jdbcType=VARCHAR},
+      </if>
+      <if test="k6 != null" >
+        k6 = #{k6,jdbcType=VARCHAR},
+      </if>
+      <if test="k8 != null" >
+        k8 = #{k8,jdbcType=VARCHAR},
+      </if>
+      <if test="k9 != null" >
+        k9 = #{k9,jdbcType=VARCHAR},
+      </if>
+      <if test="k7 != null" >
+        k7 = #{k7,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.am.chat.model.User" >
+    update am_user
+    set name = #{name,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      age = #{age,jdbcType=INTEGER},
+      birthday = #{birthday,jdbcType=DATE},
+      sex = #{sex,jdbcType=INTEGER},
+      phonenumber = #{phonenumber,jdbcType=INTEGER},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      headimage = #{headimage,jdbcType=VARCHAR},
+      intro = #{intro,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      comments = #{comments,jdbcType=VARCHAR},
+      k1 = #{k1,jdbcType=VARCHAR},
+      k2 = #{k2,jdbcType=INTEGER},
+      k3 = #{k3,jdbcType=TIMESTAMP},
+      k4 = #{k4,jdbcType=TIME},
+      k5 = #{k5,jdbcType=VARCHAR},
+      k6 = #{k6,jdbcType=VARCHAR},
+      k8 = #{k8,jdbcType=VARCHAR},
+      k9 = #{k9,jdbcType=VARCHAR},
+      k7 = #{k7,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.am.chat.model.User" >
+    update am_user
+    set name = #{name,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      age = #{age,jdbcType=INTEGER},
+      birthday = #{birthday,jdbcType=DATE},
+      sex = #{sex,jdbcType=INTEGER},
+      phonenumber = #{phonenumber,jdbcType=INTEGER},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      headimage = #{headimage,jdbcType=VARCHAR},
+      intro = #{intro,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      comments = #{comments,jdbcType=VARCHAR},
+      k1 = #{k1,jdbcType=VARCHAR},
+      k2 = #{k2,jdbcType=INTEGER},
+      k3 = #{k3,jdbcType=TIMESTAMP},
+      k4 = #{k4,jdbcType=TIME},
+      k5 = #{k5,jdbcType=VARCHAR},
+      k6 = #{k6,jdbcType=VARCHAR},
+      k8 = #{k8,jdbcType=VARCHAR},
+      k9 = #{k9,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <sql id="MysqlDialectSuffix" >
+    <if test="pagination != null" >
+      LIMIT #{pagination.startIndex}, #{pagination.pageSize}
+    </if>
+  </sql>
+</mapper>
