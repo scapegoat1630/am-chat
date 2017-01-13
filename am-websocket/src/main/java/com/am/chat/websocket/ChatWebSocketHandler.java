@@ -2,22 +2,22 @@ package com.am.chat.websocket;
 
 import com.alibaba.fastjson.JSON;
 import com.am.chat.model.Message;
+import com.am.chat.model.SysMessage;
 import com.am.chat.model.User;
+import com.am.chat.model.UserVo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 import org.springframework.web.util.HtmlUtils;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 
- * 说明：WebSocket处理器
+ * WebSocket处理器
  *
  */
 @Component("chatWebSocketHandler")
@@ -38,9 +38,20 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 		User loginUser=(User) webSocketSession.getAttributes().get("loginUser");
 		USER_SOCKETSESSION_MAP.put(loginUser.getId(), webSocketSession);
 		//群发消息告知大家
-		Message msg = new Message();
-		msg.setText("【"+loginUser.getNickname()+"】已登录！");
+		SysMessage msg = new SysMessage();
+		msg.setText("【" + loginUser.getNickname() + "】已登录！");
 		msg.setDate(new Date());
+		msg.setMessageType(SysEnumType.LogIn.getCode());
+		List<UserVo> users = new ArrayList<>();
+		Iterator<Map.Entry<Integer,WebSocketSession>> iterator = USER_SOCKETSESSION_MAP.entrySet().iterator();
+		while(iterator.hasNext()){
+			User user = (User)iterator.next().getValue().getAttributes().get("loginUser");
+			UserVo userVo = new UserVo();
+			BeanUtils.copyProperties(user,userVo);
+			users.add(userVo);
+		}
+		msg.setUsers(users);
+		logger.info("message:{}",msg);
 		//将消息转换为json
 		TextMessage message = new TextMessage(JSON.toJSONString(msg));
 		//群发消息
@@ -59,7 +70,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 		//反序列化服务端收到的json消息
 		Message msg = JSON.parseObject(message.getPayload().toString(),Message.class);
 		msg.setDate(new Date());
-		logger.info("user:{},message:{},time:{}",USER_SOCKETSESSION_MAP.get(msg.getFrom()),msg.getText(),msg.getDate());
+		logger.info("user:{},message:{},time:{}", USER_SOCKETSESSION_MAP.get(msg.getFrom()), msg.getText(), msg.getDate());
 		//处理html的字符，转义：
 		String text = msg.getText();
 		//转换为HTML转义字符表示
@@ -68,7 +79,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 		String messageJson= JSON.toJSONString(msg);
         //MongodbUtils.insert(messageJson);
 		//判断是群发还是单发
-		if(msg.getTo()==null||msg.getTo().equals("-1")){
+		if(msg.getTo()==null||msg.getTo().equals(-1)){
 			//群发
 			sendMessageToAll(new TextMessage(messageJson));
 		}else{
@@ -89,24 +100,30 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 			webSocketSession.close();
 		}
 		//群发消息告知大家
-		Message msg = new Message();
+		SysMessage msg = new SysMessage();
 		msg.setDate(new Date());
-		
+		msg.setMessageType(SysEnumType.LogOut.getCode());
 		//获取异常的用户的会话中的用户编号
 		User loginUser=(User)webSocketSession.getAttributes().get("loginUser");
 		//获取所有的用户的会话
 		Set<Map.Entry<Integer, WebSocketSession>> entrySet = USER_SOCKETSESSION_MAP.entrySet();
+		List<UserVo> users = new ArrayList<>();
 		//并查找出在线用户的WebSocketSession（会话），将其移除（不再对其发消息了。。）
 		for (Map.Entry<Integer, WebSocketSession> entry : entrySet) {
 			if(entry.getKey().equals(loginUser.getId())){
-				msg.setText("万众瞩目的【" + loginUser.getNickname() + "】已经退出。。。！");
+				msg.setText("【" + loginUser.getNickname() + "】已经退出");
 				//清除在线会话
 				USER_SOCKETSESSION_MAP.remove(entry.getKey());
 				//记录日志：
 				logger.info("Socket会话已经移除:用户ID" + entry.getKey());
-				break;
+			}else {
+				User user = (User)entry.getValue().getAttributes().get("loginUser");
+				UserVo userVo = new UserVo();
+				BeanUtils.copyProperties(user,userVo);
+				users.add(userVo);
 			}
 		}
+		msg.setUsers(users);
 		TextMessage message = new TextMessage(JSON.toJSONString(msg));
 		sendMessageToAll(message);
 	}
@@ -120,22 +137,29 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 		// 记录日志，准备关闭连接
 		logger.info("Websocket正常断开:" + webSocketSession.getId() + "已经关闭");
 		//群发消息告知大家
-		Message msg = new Message();
+		SysMessage msg = new SysMessage();
 		msg.setDate(new Date());
+		msg.setMessageType(SysEnumType.LogOut.getCode());
 		//获取异常的用户的会话中的用户编号
 		User loginUser=(User)webSocketSession.getAttributes().get("loginUser");
 		//并查找出在线用户的WebSocketSession（会话），将其移除（不再对其发消息了。。）
+		List<UserVo> users = new ArrayList<>();
 		for (Map.Entry<Integer, WebSocketSession> entry : USER_SOCKETSESSION_MAP.entrySet()) {
 			if(entry.getKey().equals(loginUser.getId())){
 				//群发消息告知大家
-				msg.setText("万众瞩目的【" + loginUser.getNickname() + "】已经有事先走了，大家继续聊...");
+				msg.setText("【" + loginUser.getNickname() + "】已退出");
 				//清除在线会话
 				USER_SOCKETSESSION_MAP.remove(entry.getKey());
 				//记录日志：
 				logger.info("Socket会话已经移除:用户ID" + entry.getKey());
-				break;
+			}else {
+				User user = (User)entry.getValue().getAttributes().get("loginUser");
+				UserVo userVo = new UserVo();
+				BeanUtils.copyProperties(user,userVo);
+				users.add(userVo);
 			}
 		}
+		msg.setUsers(users);
 		TextMessage message = new TextMessage(JSON.toJSONString(msg));
 		sendMessageToAll(message);
 	}
@@ -160,7 +184,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 	 * @throws IOException 
 	 *
 	 */
-	private void sendMessageToUser(String id, TextMessage message) throws IOException{
+	private void sendMessageToUser(Integer id, TextMessage message) throws IOException{
 		//获取到要接收消息的用户的session
 		WebSocketSession webSocketSession = USER_SOCKETSESSION_MAP.get(id);
 		if (webSocketSession != null && webSocketSession.isOpen()) {

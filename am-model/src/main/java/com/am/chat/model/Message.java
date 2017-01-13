@@ -7,13 +7,16 @@ import java.util.Date;
  */
 public class Message {
 	//发送者
-	public String from;
+	public Integer from;
+
 	//发送者名称
 	public String fromName;
 	//接收者
-	public String to;
+	public Integer to;
 	//发送的文本
 	public String text;
+
+	public String messageType;
 
 	public Date getDate() {
 		return date;
@@ -26,15 +29,13 @@ public class Message {
 	//发送日期
 	public Date date;
 
-
-	public String getFrom() {
+	public Integer getFrom() {
 		return from;
 	}
 
-	public void setFrom(String from) {
+	public void setFrom(Integer from) {
 		this.from = from;
 	}
-
 	public String getFromName() {
 		return fromName;
 	}
@@ -43,11 +44,11 @@ public class Message {
 		this.fromName = fromName;
 	}
 
-	public String getTo() {
+	public Integer getTo() {
 		return to;
 	}
 
-	public void setTo(String to) {
+	public void setTo(Integer to) {
 		this.to = to;
 	}
 
@@ -59,7 +60,13 @@ public class Message {
 		this.text = text;
 	}
 
+	public String getMessageType() {
+		return messageType;
+	}
 
+	public void setMessageType(String messageType) {
+		this.messageType = messageType;
+	}
 
 	@Override
 	public String toString() {

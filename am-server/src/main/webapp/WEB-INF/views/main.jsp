@@ -67,7 +67,7 @@ String baseUrlPath = request.getScheme() + "://" + request.getServerName() + ":"
 			  console.log('Client received a message',event);
 			  var data=$.parseJSON(event.data);
 			  console.log("WebSocket:收到一条消息",data);
-			 insertI(data,uid);
+			 insertI(data,uid,'${pageContext.request.contextPath}');
 		  }
 		  //使用ctrl+回车快捷键发送消息
 		  function keySend(e) {
@@ -141,108 +141,17 @@ String baseUrlPath = request.getScheme() + "://" + request.getServerName() + ":"
     	<div class="ui">
 		<div class="left-menu">
 				<menu class="list-friends">
-					<li>
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
-						<div class="info">
-							<div class="user">灏忚眴</div>
-							<div class="status on"> online</div>
-						</div>
-					</li>
-					<li>
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
-						<div class="info">
-							<div class="user">闃垮</div>
-							<div class="status on"> online</div>
-						</div>
-					</li>
-					<li>
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
-						<div class="info">
-							<div class="user">2妲�</div>
-							<div class="status off">left 3 min age</div>
-						</div>
-					</li>
-					<li>
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
-						<div class="info">
-							<div class="user">鐞嗛┈</div>
-							<div class="status on"> online</div>
-						</div>
-					</li>
-					<li>
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
-						<div class="info">
-							<div class="user">Name Fam</div>
-							<div class="status off">left 4 min age</div>
-						</div>
-					</li>
-					<li>
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
-						<div class="info">
-							<div class="user">Name Fam</div>
-							<div class="status off">left 12 min age</div>
-						</div>
-					</li>
-					<li>
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
-						<div class="info">
-							<div class="user">Name Fam</div>
-							<div class="status off">left 13 min age</div>
-						</div>
-					</li>
-					<li>
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
-						<div class="info">
-							<div class="user">Name Fam</div>
-							<div class="status on">online</div>
-						</div>
-					</li>
-					<li>
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
-						<div class="info">
-							<div class="user">Name Fam</div>
-							<div class="status off">left 6 min age</div>
-						</div>
-					</li>
-					<li>
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
-						<div class="info">
-							<div class="user">Name Fam</div>
-							<div class="status on">online</div>
-						</div>
-					</li>
-					<li>
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
-						<div class="info">
-							<div class="user">Name Fam</div>
-							<div class="status off">left 1 min age</div>
-						</div>
-					</li>
-					<li>
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
-						<div class="info">
-							<div class="user">Name Fam</div>
-							<div class="status on">online</div>
-						</div>
-					</li>
-					<li>
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
-						<div class="info">
-							<div class="user">Name Fam</div>
-							<div class="status off">left 23 min age</div>
-						</div>
-					</li>
 				</menu>
 		</div>
 		<div class="chat">
 
 			<div class="top">
 				<div class="avatar">
-					<img width="50" height="50" src="/resources/userhead/1.jpg">
+					<img width="50" height="50" src="${pageContext.request.contextPath}/resources/userhead/44.jpg">
 				</div>
 				<div class="info">
 					<div class="name">阿姆娱乐聊天室</div>
-					<div class="count"> 1902 娑堟伅</div>
+					<div class="count"> 1902 消息</div>
 				</div>
 			</div>
 
@@ -251,7 +160,7 @@ String baseUrlPath = request.getScheme() + "://" + request.getServerName() + ":"
 
 				<li class="friend-with-a-SVAGina">
 					<div class="head">
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<img width="50" height="50" src="${pageContext.request.contextPath}/resources/userhead/1.jpg">
 						<span class="name">阿姆</span>
 						<span class="time">10:15 AM</span>
 					</div>
@@ -262,7 +171,7 @@ String baseUrlPath = request.getScheme() + "://" + request.getServerName() + ":"
 					<div class="head">
 						<span class="time">10:13 AM, Today</span>
 						<span class="name">小豆</span>
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<img width="50" height="50" src="${pageContext.request.contextPath}/resources/userhead/1.jpg">
 					</div>
 					<div class="message">怎么</div>
 				</li>
@@ -271,14 +180,14 @@ String baseUrlPath = request.getScheme() + "://" + request.getServerName() + ":"
 					<div class="head">
 						<span class="name">小豆</span>
 						<span class="time">10:13 AM, Today</span>
-						<img width="50" height="50" src="/resources/userhead/1.jpg">
+						<img width="50" height="50" src="${pageContext.request.contextPath}/resources/userhead/1.jpg">
 					</div>
 					<div class="message">你走吧!</div>
 				</li>
 
 				<li class="friend-with-a-SVAGina">
 					<div class="head">
-					<img width="50" height="50" src="/resources/userhead/1.jpg">
+					<img width="50" height="50" src="${pageContext.request.contextPath}/resources/userhead/1.jpg">
 						<span class="name">阿姆</span>
 						<span class="time">10:15 AM, Today</span>
 					</div>
