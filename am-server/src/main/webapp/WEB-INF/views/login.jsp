@@ -5,12 +5,30 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>AM聊天</title>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery-1.11.3.min.js"></script>
+	<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/lbt.js"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/js/style.css" type="text/css" media="all" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/login.css" type="text/css" media="all" />
 <script type="text/javascript">
+
 	$(function(){
-		
+		$('#create').click(function(){
+			$.post(
+				 '${pageContext.request.contextPath }/user/register',
+				$('.register-form').serialize(),
+				function(data){
+					var response = eval(data);
+					console.log(response);
+					if(response.success == true){
+						alert("创建成功");
+						$('form').animate({height: "toggle", opacity: "toggle"}, "slow");
+					}
+				}
+			);
+		});
+		$('.message a').click(function(){
+			$('form').animate({height: "toggle", opacity: "toggle"}, "slow");
+		});
+
 	});
 
 </script>
@@ -23,41 +41,28 @@
 </div>
 <!--头部end-->
 <!--登陆区域开始-->
-<div class="loginMain">
-	<div class="con">
-        <a href="javascript:;" class="left"></a>
-        <a href="javascript:;" class="right"></a>    </div>
-
-
-	<div class="loginArea">
-    	<h2>欢迎登陆</h2>
-        <p>欢迎您来到AM的聊天空间！</p>
-        <div><font color="red" size="16">${requestScope.errorTips }</font></div>
-        <form action="${pageContext.request.contextPath }/chat/login"  method="post">
-        	<input type="text" value="请输入您想显示的昵称" name="nickname" id="myText" />
-            <button>进入聊天室</button>
-        </form>
-    </div>
+<div class="login-page">
+	<div class="form">
+		<form class="register-form"  onSubmit = "return false;">
+			<input type="text" name="name" placeholder="用户名"/>
+			<input type="password" name="password"  placeholder="密码"/>
+			<input type="text"  name="nickname" placeholder="昵称"/>
+			<input type="text" name="name"  placeholder="生日"/>
+			<input type="text" name="age"  placeholder="年龄"/>
+			<input type="text" name="email"  placeholder="email address"/>
+			<button id="create">创建用户</button>
+			<p class="message">已经注册? <a href="#">登录</a></p>
+		</form>
+		<form class="login-form" action="${pageContext.request.contextPath }/chat/mainpage"  method="get">
+			<input type="text" placeholder="name" na	me="name"/>
+			<input type="password" placeholder="password" name="password"/>
+			<button>登录</button>
+			<p class="message">没有注册? <a href="#">注册</a></p>
+		</form>
+	</div>
 </div>
 <!--登陆区域结束-->
 
-<div class="footer"/>
 
 </body>
-<script type="text/javascript">
-	var myText=document.getElementById('myText');
-	myText.onfocus=function(){
-		if(myText.value=='请输入您想显示的昵称'){
-			myText.value='';
-			myText.style.color='#333';	
-		}	
-	}
-	myText.onblur=function(){
-		if(myText.value==''){
-			myText.value='请输入您想显示的昵称';
-			myText.style.color='#ccc';
-		}	
-	}
-
-</script>
 </html>
