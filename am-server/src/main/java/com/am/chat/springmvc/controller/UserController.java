@@ -76,11 +76,11 @@ public class UserController {
         }
         // 将用户放入session
        if(loginUser != null){
+           logger.info("userId:{},userName:{},userNickName:{}", loginUser.getId(), loginUser.getName(), loginUser.getNickname());
            session.setAttribute("loginUser", loginUser);
-           return new ModelAndView("redirect:loginpage");
+           return new ModelAndView("redirect:/chat/mainpage");
        }
-        logger.info("userId:{},userName:{},userNickName:{}", loginUser.getId(), loginUser.getName(), loginUser.getNickname());
-        return new ModelAndView("redirect:mainpage");
+        return new ModelAndView("redirect:loginpage");
     }
 
     /**
@@ -118,6 +118,5 @@ public class UserController {
         }else {
             return new ErrorResponse(ResponseStatus.InternalError.getCode()," userService.register error");
         }
-
     }
 }

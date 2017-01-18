@@ -6,9 +6,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>AM聊天</title>
 	<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/lbt.js"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/login.css" type="text/css" media="all" />
-<script type="text/javascript">
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/lbt.js"></script>
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/login.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/BeatPicker.min.css"/>
+	<script src="${pageContext.request.contextPath}/resources/js/BeatPicker.min.js"></script>
+
+	<script type="text/javascript">
 
 	$(function(){
 		$('#create').click(function(){
@@ -47,14 +50,14 @@
 			<input type="text" name="name" placeholder="用户名"/>
 			<input type="password" name="password"  placeholder="密码"/>
 			<input type="text"  name="nickname" placeholder="昵称"/>
-			<input type="text" name="name"  placeholder="生日"/>
 			<input type="text" name="age"  placeholder="年龄"/>
+			<input type="text" placeholder="生日" data-beatpicker="true" name="birthday" data-beatpicker-module="today,clear" data-beatpicker-module="icon" data-beatpicker-position="['*','*']">
 			<input type="text" name="email"  placeholder="email address"/>
 			<button id="create">创建用户</button>
 			<p class="message">已经注册? <a href="#">登录</a></p>
 		</form>
-		<form class="login-form" action="${pageContext.request.contextPath }/chat/mainpage"  method="get">
-			<input type="text" placeholder="name" na	me="name"/>
+		<form class="login-form" action="${pageContext.request.contextPath }/user/login"  method="post">
+			<input type="text" placeholder="name" name="name"/>
 			<input type="password" placeholder="password" name="password"/>
 			<button>登录</button>
 			<p class="message">没有注册? <a href="#">注册</a></p>

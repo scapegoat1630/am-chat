@@ -25,6 +25,7 @@ public class ChatController {
 	public ModelAndView mainpage(HttpServletRequest request) {
 		//判断，如果没有session，则跳到登录页面
 		HttpSession session = request.getSession();
+		logger.info(session.getAttribute("loginUser"));
 		if(null==session.getAttribute("loginUser")){
 			return new ModelAndView("login");
 		}else{
