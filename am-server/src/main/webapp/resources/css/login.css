@@ -1,8 +1,14 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
+.header {
+    text-align: center;
+    color: #ffffff;
+    margin-top: 15%;
+}
+
 .login-page {
     width: 360px;
-    padding: 8% 0 0;
+    padding: 2% 0 0;
     margin: auto;
 }
 .form {
