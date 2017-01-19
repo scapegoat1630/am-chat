@@ -51,7 +51,7 @@
 			<input type="password" name="password"  placeholder="密码"/>
 			<input type="text"  name="nickname" placeholder="昵称"/>
 			<input type="text" name="age"  placeholder="年龄"/>
-			<input type="text" placeholder="生日" data-beatpicker="true" name="birthday" data-beatpicker-module="today,clear" data-beatpicker-module="icon" data-beatpicker-position="['*','*']">
+			<input style="background-image:url('');" type="text" placeholder="生日" data-beatpicker="true" name="birthday" data-beatpicker-module="today,clear" data-beatpicker-module="icon" data-beatpicker-position="['*','*']">
 			<input type="text" name="email"  placeholder="email address"/>
 			<button id="create">创建用户</button>
 			<p class="message">已经注册? <a href="#">登录</a></p>
