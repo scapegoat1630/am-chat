@@ -21,7 +21,7 @@ public class ChatController {
 	private static Logger logger = LogManager.getLogger(ChatController.class);
 	
 	// 跳转到聊天室页面
-	@RequestMapping(value = "mainpage", method = RequestMethod.GET)
+	@RequestMapping(value = "main", method = RequestMethod.GET)
 	public ModelAndView mainpage(HttpServletRequest request) {
 		//判断，如果没有session，则跳到登录页面
 		HttpSession session = request.getSession();

@@ -15,8 +15,26 @@
         <javaModelGenerator targetPackage="com.am.chat.model" targetProject=".\am-model\src\main\java" />
         <sqlMapGenerator targetPackage="com.am.chat.mybatis.mapper" targetProject=".\am-mybatis\src\main\resources\mapper" />
         <javaClientGenerator type="XMLMAPPER" targetPackage="com.am.chat.mybatis.mapper" targetProject=".\am-api\src\main\java" />
-        <table tableName="am_user" domainObjectName="User">
+        <!--
+            <table tableName="am_user" domainObjectName="User">
             <generatedKey column="id" sqlStatement="mysql" identity="true"/>
         </table>
+        <table tableName="am_auchc_map" domainObjectName="Auth">
+            <generatedKey column="id" sqlStatement="mysql" identity="true"/>
+        </table>
+        <table tableName="am_authc_map" domainObjectName="Auth">
+            <generatedKey column="id" sqlStatement="mysql" identity="true"/>
+        </table>
+        <table tableName="am_permission" domainObjectName="Permission">
+            <generatedKey column="id" sqlStatement="mysql" identity="true"/>
+        </table>
+          <table tableName="am_user_role" domainObjectName="userRule">
+            <generatedKey column="id" sqlStatement="mysql" identity="true"/>
+        </table>
+        -->
+        <table tableName="am_role" domainObjectName="Role">
+            <generatedKey column="id" sqlStatement="mysql" identity="true"/>
+        </table>
+
     </context>
 </generatorConfiguration>

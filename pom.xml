@@ -480,6 +480,12 @@
                 <artifactId>servlet-api</artifactId>
                 <version>${servlet-api.version}</version>
             </dependency>
+            <!--shiro-->
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-core</artifactId>
+                <version>1.3.2</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
@@ -569,6 +575,7 @@
         <module>am-api</module>
         <module>am-common</module>
         <module>am-websocket</module>
+        <module>am-shiro</module>
     </modules>
 
 </project>
