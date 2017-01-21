@@ -1,10 +1,10 @@
 package com.am.chat.websocket;
 
 import com.alibaba.fastjson.JSON;
-import com.am.chat.model.Message;
-import com.am.chat.model.SysMessage;
+import com.am.chat.websocket.model.Message;
+import com.am.chat.websocket.model.SysMessage;
 import com.am.chat.model.User;
-import com.am.chat.model.UserVo;
+import com.am.chat.websocket.model.UserVo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -70,7 +70,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 		//反序列化服务端收到的json消息
 		Message msg = JSON.parseObject(message.getPayload().toString(),Message.class);
 		msg.setDate(new Date());
-		logger.info("user:{},message:{},time:{}", USER_SOCKETSESSION_MAP.get(msg.getFrom()), msg.getText(), msg.getDate());
+		logger.info("user:{},message:{},time:{}", ((User)(USER_SOCKETSESSION_MAP.get(msg.getFrom()).getAttributes()).get("loginUser")).getNickname(), msg.getText(), msg.getDate());
 		//处理html的字符，转义：
 		String text = msg.getText();
 		//转换为HTML转义字符表示
