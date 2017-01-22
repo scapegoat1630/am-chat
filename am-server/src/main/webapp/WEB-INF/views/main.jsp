@@ -12,12 +12,14 @@ String baseUrlPath = request.getScheme() + "://" + request.getServerName() + ":"
     <title>阿姆娱乐聊天室</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/normalize.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/jquery.sinaEmotion.css">
 	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/sockjs.min.js"></script>
 	<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 	<script src='http://cdnjs.cloudflare.com/ajax/libs/nicescroll/3.5.4/jquery.nicescroll.js'></script>
-	  <script src="${pageContext.request.contextPath}/resources/js/common.js"></script>
-	  <script src="${pageContext.request.contextPath}/resources/js/index.js"></script>
-	  <script type="text/javascript">
+	<script src='${pageContext.request.contextPath}/resources/js/jquery.sinaEmotion.js'></script>
+	<script src="${pageContext.request.contextPath}/resources/js/common.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/index.js"></script>
+	<script type="text/javascript">
 		  var path = '<%=basePath%>';
 		  //当前用户id
 		  var uid='${sessionScope.loginUser.id}';
@@ -147,6 +149,16 @@ String baseUrlPath = request.getScheme() + "://" + request.getServerName() + ":"
 			  );
 			  //初始化时如果有消息，则滚动条到最下面
 			  claerResizeScroll();
+			  var textDiv =   $("#text");
+			  $('.fa-picture-o').bind({
+				  click: function(event){
+					  if(! $('#sinaEmotion').is(':visible')){
+						  $(this).sinaEmotion(textDiv);
+						  event.stopPropagation();
+					  }
+				  }
+			  });
+
 		  });
 	  </script>
   </head>

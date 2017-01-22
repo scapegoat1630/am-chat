@@ -99,4 +99,5 @@
           messageDiv
       );
       claerResizeScroll();
+      $('.message').last().parseEmotion();
   };
