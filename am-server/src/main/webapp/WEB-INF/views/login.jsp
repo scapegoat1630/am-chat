@@ -56,7 +56,7 @@
 			<button id="create">创建用户</button>
 			<p class="message">已经注册? <a href="#">登录</a></p>
 		</form>
-		<form class="login-form" action="${pageContext.request.contextPath }/user/login"  method="post">
+		<form class="login-form" action="${pageContext.request.contextPath }/authc/login"  method="post">
 			<input type="text" placeholder="name" name="name"/>
 			<input type="password" placeholder="password" name="password"/>
 			<button>登录</button>

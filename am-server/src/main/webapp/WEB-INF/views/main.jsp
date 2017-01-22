@@ -27,21 +27,24 @@ String baseUrlPath = request.getScheme() + "://" + request.getServerName() + ":"
 		  var fromName='${sessionScope.loginUser.nickname}';
 		  //接收人编号
 		  var to="-1";
+		 function getNewWEbsocket() {
+			 if ('WebSocket' in window) {
+				 return new WebSocket("ws://" + path + "ws");
+				 //火狐
+			 } else if ('MozWebSocket' in window) {
+				 return new MozWebSocket("ws://" + path + "ws");
+			 } else {
+				 return new SockJS("http://" + path + "ws/sockjs");
+			 };
+		 };
 		  /**创建一个Socket实例
 		   *参数为URL，ws表示WebSocket协议。
 		   * onopen、onclose和onmessage方法把事件连接到Socket实例上。
 		   * 每个方法都提供了一个事件，以表示Socket的状态。
 		   */
-		  var websocket;
+		  var websocket = getNewWEbsocket();
 		  //不同浏览器的WebSocket对象类型不同
-		  if ('WebSocket' in window) {
-			  websocket = new WebSocket("ws://" + path + "ws");
-			  //火狐
-		  } else if ('MozWebSocket' in window) {
-			  websocket = new MozWebSocket("ws://" + path + "ws");
-		  } else {
-			  websocket = new SockJS("http://" + path + "ws/sockjs");
-		  }
+
 		  //打开Socket,
 		  websocket.onopen = function(event) {
 			  console.log("WebSocket:已连接");
@@ -49,14 +52,14 @@ String baseUrlPath = request.getScheme() + "://" + request.getServerName() + ":"
 		  // 监听WebSocket的关闭
 		  websocket.onclose = function(event) {
 			  //todo 系统消息，监听WebSocket的关闭
-			  claerResizeScroll();
 			  console.log("WebSocket:已关闭：Client notified socket has closed",event);
+			  websocket = getNewWEbsocket();
 		  };
 		  //监听异常
 		  websocket.onerror = function(event) {
 			  //todo 系统消息，监听WebSocket异常
-			  claerResizeScroll();
 			  console.log("WebSocket:发生错误 ",event);
+			  websocket = getNewWEbsocket();
 		  };
 		  // 监听消息
 		  /**
@@ -73,7 +76,7 @@ String baseUrlPath = request.getScheme() + "://" + request.getServerName() + ":"
 		  function keySend(e) {
 			  var theEvent = window.event || e;
 			  var code = theEvent.keyCode || theEvent.which;
-			  if (theEvent.ctrlKey && code == 13) {
+			  if (code == 13) {
 				  var msg=$("#text");
 				  if (msg.innerHTML == "") {
 					  msg.focus();

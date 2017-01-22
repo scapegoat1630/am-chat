@@ -6,6 +6,7 @@ import com.am.chat.model.User;
 import com.am.chat.mybatis.mapper.PermissionMapper;
 import com.am.chat.mybatis.mapper.RoleMapper;
 import com.am.chat.mybatis.mapper.UserMapper;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -48,6 +49,7 @@ public class UserRealm extends AuthorizingRealm{
         //到数据库查是否有此对象
         User user = userDao.findByName(loginName);
         if (user != null) {
+            SecurityUtils.getSubject().getSession().setAttribute("loginUer",user);
             //权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
             SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
             //用户的角色集合
@@ -85,7 +87,10 @@ public class UserRealm extends AuthorizingRealm{
         User user = userDao.findByName(token.getUsername());
         if (user != null) {
             //若存在，将此用户存放到登录认证info中
+            SecurityUtils.getSubject().getSession().setAttribute("loginUser",user);
+
             return new SimpleAuthenticationInfo(user.getName(), user.getPassword(), getName());
+
         }
         return null;
     }
