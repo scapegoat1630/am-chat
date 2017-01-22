@@ -21,9 +21,9 @@ public interface UserMapper {
 
     User selectByPrimaryKey(Integer id);
 
-    int updateByExampleSelective( User record, UserExample example);
+    int updateByExampleSelective( User record,  UserExample example);
 
-    int updateByExampleWithBLOBs( User record, UserExample example);
+    int updateByExampleWithBLOBs( User record,  UserExample example);
 
     int updateByExample( User record,  UserExample example);
 
@@ -32,4 +32,12 @@ public interface UserMapper {
     int updateByPrimaryKeyWithBLOBs(User record);
 
     int updateByPrimaryKey(User record);
+    //===============================================================================================
+
+    /**
+     * 根据用户名获取用户
+     * @param name  用户名
+     * @return
+     */
+    User findByName(String name);
 }

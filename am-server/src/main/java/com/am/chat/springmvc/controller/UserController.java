@@ -57,32 +57,6 @@ public class UserController {
       }
         return false;
    }
-
-
-    // 登录进入聊天主页面
-    @RequestMapping(value = "login", method = RequestMethod.POST)
-    public ModelAndView login(@RequestParam(value="name")String  name,@RequestParam(value="password")String  password, HttpServletRequest request) {
-        logger.info("name:{},password:{}",name,password);
-        HttpSession session = request.getSession();
-        // 判断是否是一个已经登录的用户，没有则登录
-        if (null != session.getAttribute("loginUser")) {
-            // 清除旧的用户
-            session.removeAttribute("loginUser");
-        }
-        //登录操作
-        User loginUser = null;
-        if(StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(password)){
-            loginUser = userService.login(name,password);
-        }
-        // 将用户放入session
-       if(loginUser != null){
-           logger.info("userId:{},userName:{},userNickName:{}", loginUser.getId(), loginUser.getName(), loginUser.getNickname());
-           session.setAttribute("loginUser", loginUser);
-           return new ModelAndView("redirect:/chat/mainpage");
-       }
-        return new ModelAndView("redirect:loginpage");
-    }
-
     /**
      * 注用户注册
      * @param vo 用户注册信息

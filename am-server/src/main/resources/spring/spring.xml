@@ -22,4 +22,5 @@
     <import resource="spring-service.xml"/>
     <import resource="spring-tx.xml"/>
     <import resource="spring-websocket.xml"/>
+    <import resource="spring-shiro.xml"></import>
 </beans>
