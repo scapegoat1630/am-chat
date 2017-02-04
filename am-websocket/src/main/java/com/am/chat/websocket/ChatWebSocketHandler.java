@@ -1,6 +1,8 @@
 package com.am.chat.websocket;
 
 import com.alibaba.fastjson.JSON;
+import com.am.chat.common.util.JedisUtil;
+import com.am.chat.common.util.RedisUtil;
 import com.am.chat.websocket.model.Message;
 import com.am.chat.websocket.model.SysMessage;
 import com.am.chat.model.User;
@@ -77,7 +79,6 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 		String htmlEscapeText = HtmlUtils.htmlEscape(text);
 		msg.setText(htmlEscapeText);
 		String messageJson= JSON.toJSONString(msg);
-        //MongodbUtils.insert(messageJson);
 		//判断是群发还是单发
 		if(msg.getTo()==null||msg.getTo().equals(-1)){
 			//群发

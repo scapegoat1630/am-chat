@@ -18,7 +18,7 @@
         <registry.version>1.0.60</registry.version>
         <slf4j.version>1.7.5</slf4j.version>
         <aspectj.version>1.7.2</aspectj.version>
-        <spring.version>4.1.5.RELEASE</spring.version>
+        <spring.version>4.2.6.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
         <fastjson.version>1.1.45</fastjson.version>
         <netty.version>4.0.24.Final</netty.version>

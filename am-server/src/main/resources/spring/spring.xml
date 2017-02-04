@@ -12,6 +12,7 @@
         <property name="locations">
             <list>
                 <value>classpath:important.properties</value>
+                <value>classpath:redis.properties</value>
             </list>
         </property>
     </bean>
@@ -22,5 +23,6 @@
     <import resource="spring-service.xml"/>
     <import resource="spring-tx.xml"/>
     <import resource="spring-websocket.xml"/>
-    <import resource="spring-shiro.xml"></import>
+    <import resource="spring-shiro.xml" />
+    <import resource="spring-redis.xml" />
 </beans>
