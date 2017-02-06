@@ -133,6 +133,18 @@ String baseUrlPath = request.getScheme() + "://" + request.getServerName() + ":"
 			  $("#text").on("keydown",function(event){
 				  keySend(event);
 			  });
+			  //获取历史聊天记录
+			  $.get(
+					  '${pageContext.request.contextPath }/chat/chatHistory',
+					  function(data){
+						  var response = eval(data);
+						  console.log(response);
+						  for(var i = 0; i < response.length;i++){
+							  console.log(response[i]);
+							  insertI($.parseJSON(response[i]),uid,'${pageContext.request.contextPath}');
+						  }
+					  }
+			  );
 			  //初始化时如果有消息，则滚动条到最下面
 			  claerResizeScroll();
 		  });
@@ -161,42 +173,8 @@ String baseUrlPath = request.getScheme() + "://" + request.getServerName() + ":"
 
 			<ul class="messages">
 
-				<li class="friend-with-a-SVAGina">
-					<div class="head">
-						<img width="50" height="50" src="${pageContext.request.contextPath}/resources/userhead/1.jpg">
-						<span class="name">阿姆</span>
-						<span class="time">10:15 AM</span>
-					</div>
-					<div class="message">小豆</div>
-				</li>
-
-				<li class="i">
-					<div class="head">
-						<span class="time">10:13 AM, Today</span>
-						<span class="name">小豆</span>
-						<img width="50" height="50" src="${pageContext.request.contextPath}/resources/userhead/1.jpg">
-					</div>
-					<div class="message">怎么</div>
-				</li>
-
-				<li class="i">
-					<div class="head">
-						<span class="name">小豆</span>
-						<span class="time">10:13 AM, Today</span>
-						<img width="50" height="50" src="${pageContext.request.contextPath}/resources/userhead/1.jpg">
-					</div>
-					<div class="message">你走吧!</div>
-				</li>
-
-				<li class="friend-with-a-SVAGina">
-					<div class="head">
-					<img width="50" height="50" src="${pageContext.request.contextPath}/resources/userhead/1.jpg">
-						<span class="name">阿姆</span>
-						<span class="time">10:15 AM, Today</span>
-					</div>
-					<div class="message">小豆不要我</div>
-				</li>
 			</ul>
+
 			<div class="write-form">
 				<textarea placeholder="Type your message" name="e" id="text"  rows="2"></textarea>
 				<i class="fa fa-picture-o"></i>

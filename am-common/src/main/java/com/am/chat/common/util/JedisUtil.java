@@ -30,6 +30,13 @@ public final class JedisUtil {
 			}
 		}, expire);
 	}
+	public static final String set(final String key,final Object value) {
+		return JedisTemplate.run(key, new Executor<String>() {
+			public String execute(ShardedJedis jedis) {
+				return jedis.set(key,  JSON.toJSONString(value));
+			}
+		});
+	}
 
 	public static final String set(final String key, final Integer seconds, final Object value) {
 		return JedisTemplate.run(key, new Executor<String>() {

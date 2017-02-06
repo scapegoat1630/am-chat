@@ -192,8 +192,8 @@ body {
   font-size: 15px;
   border-radius: 3px;
   padding: 20px;
-  line-height: 5px;
-  max-width: 500px;
+  line-height: 20px;
+  max-width: 300px;
   word-wrap: break-word;
   position: relative;
 }

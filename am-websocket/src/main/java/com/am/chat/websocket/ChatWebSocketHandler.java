@@ -79,6 +79,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 		String htmlEscapeText = HtmlUtils.htmlEscape(text);
 		msg.setText(htmlEscapeText);
 		String messageJson= JSON.toJSONString(msg);
+		JedisUtil.zadd("chat_messages",msg.getDate().getTime(),messageJson);
 		//判断是群发还是单发
 		if(msg.getTo()==null||msg.getTo().equals(-1)){
 			//群发

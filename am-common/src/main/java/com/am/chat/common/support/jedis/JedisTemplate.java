@@ -36,7 +36,7 @@ public class JedisTemplate {
             K result = executor.execute(jedis);
             if (jedis.exists(key)) {
                 if (expire == null || expire.length == 0) {
-                    jedis.expire(key, EXPIRE);
+                    //jedis.expire(key, EXPIRE);
                 } else if (expire.length == 1) {
                     jedis.expire(key, expire[0]);
                 }
@@ -61,7 +61,7 @@ public class JedisTemplate {
             K result = executor.execute(jedis);
             if (jedis.exists(key)) {
                 if (expire == null || expire.length == 0) {
-                    jedis.expire(key, EXPIRE);
+                    //jedis.expire(key, EXPIRE);
                 } else if (expire.length == 1) {
                     jedis.expire(key, expire[0]);
                 }
