@@ -205,7 +205,6 @@
 					return $(this).parents('form').find(
 							'textarea,input[type=text]').eq(0);
 				};
-		alert(target);
 		var $that = $(this).last();
 		var offset = $that.offset();
 
