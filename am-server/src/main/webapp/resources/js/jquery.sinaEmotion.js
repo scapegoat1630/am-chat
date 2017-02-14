@@ -205,7 +205,6 @@
 					return $(this).parents('form').find(
 							'textarea,input[type=text]').eq(0);
 				};
-
 		var $that = $(this).last();
 		var offset = $that.offset();
 
@@ -221,7 +220,7 @@
 				showCatPage(0);
 			});
 			$('#sinaEmotion').css({
-				top : offset.top + $that.outerHeight() + 5,
+				top : offset.top + $that.outerHeight() - 250,
 				left : offset.left
 			}).show();
 		}
