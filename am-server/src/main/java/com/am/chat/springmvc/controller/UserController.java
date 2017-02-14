@@ -1,5 +1,6 @@
 package com.am.chat.springmvc.controller;
 
+import com.am.chat.common.data.JSON;
 import com.am.chat.model.User;
 import com.am.chat.model.vo.*;
 import com.am.chat.model.vo.ResponseStatus;
@@ -27,11 +28,10 @@ public class UserController {
 
     @RequestMapping("/get")
     @ResponseBody
-    public UserVo getUser(@RequestParam(value="id")Integer id){
-        UserVo userVo = new UserVo();
+    @JSON(type = User.class,filter = "password,k1,k2,k3")
+    public User getUser(@RequestParam(value="id")Integer id){
         User  user = userService.getUserById(id);
-        BeanUtils.copyProperties(user,userVo);
-        return  userVo;
+        return  user;
     }
 
     /**
